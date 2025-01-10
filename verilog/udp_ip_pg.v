@@ -192,12 +192,25 @@ end
   VProc vp (
    .Clk                                (clk),
    .Addr                               (Addr),
+   
+`ifdef VPROC_BYTE_ENABLE
+   .BE                                 (),
+`endif
+
    .WE                                 (WE),
    .RD                                 (RD),
    .DataOut                            (DataOut),
    .DataIn                             (DataIn),
    .WRAck                              (WE),
    .RDAck                              (RD),
+   
+`ifdef VPROC_BURST_IF
+    // Burst count
+    .Burst                             (),
+    .BurstFirst                        (),
+    .BurstLast                         (),
+`endif
+
    .Interrupt                          (3'b000),
    .Update                             (Update),
    .UpdateResponse                     (UpdateResponse),
