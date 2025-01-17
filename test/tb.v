@@ -48,43 +48,18 @@ integer        count;
 
 wire  [1:0]    halt;
 
-wire  [7:0]    txd;
-wire           txen;
-wire           txer;
-wire  [7:0]    rxd;
-wire           rxdv;
-wire           rxer;
+wire  [7:0]    txd0,  txd1;
+wire           txen0, txen1;
+wire           txer0, txer1;
 
-`ifdef VERILATOR
-// This nastiness is needed for Verilator to ensure correct registration of inputs
-// using delta cycle reads in VProc.
-reg   [7:0]    txd_dly;
-reg            txen_dly;
-reg            txer_dly;
-reg   [7:0]    rxd_dly;
-reg            rxdv_dly;
-reg            rxer_dly;
+wire  [7:0]    rxd0,  rxd1;
+wire           rxdv0, rxdv1;
+wire           rxer0, rxer1;
 
-// Delay by half a cycle
-always @(negedge clk)
-begin
-    txd_dly  <= txd;
-    txen_dly <= txen;
-    txer_dly <= txer;
-    rxd_dly  <= rxd;
-    rxdv_dly <= rxdv;
-    rxer_dly <= rxer;
-end
-`else
-// For normal event based simulators, patch signals straight through
-// without any delays
-wire  [7:0]    txd_dly  = txd;
-wire           txen_dly = txen;
-wire           txer_dly = txer;
-wire  [7:0]    rxd_dly  = rxd;
-wire           rxdv_dly = rxdv;
-wire           rxer_dly = rxer;
-`endif
+wire [3:0]     rgmii_rxd;
+wire           rgmii_rxctl;
+wire [3:0]     rgmii_txd;
+wire           rgmii_txctl;
 
 // -----------------------------------------------
 // Initialisation, clock and reset
@@ -97,7 +72,7 @@ begin
      $dumpfile("waves.vcd");
      $dumpvars(0, tb);
    end
-   
+
    clk                                 = 1'b1;
    count                               = -1;
 
@@ -112,7 +87,7 @@ begin
      $display("***********************************************\n");
      $stop;
    end
-   
+
    // Generate a clock
    forever #(500000000.0/CLK_FREQ_KHZ) clk = ~clk;
 end
@@ -146,15 +121,63 @@ end
   (
     .clk                     (clk),
 
-    .txd                     (txd),
-    .txen                    (txen),
-    .txer                    (txer),
+    .txd                     (txd0),
+    .txen                    (txen0),
+    .txer                    (txer0),
 
-    .rxd                     (rxd_dly),
-    .rxdv                    (rxdv_dly),
-    .rxer                    (rxer_dly),
+    .rxd                     (rxd0),
+    .rxdv                    (rxdv0),
+    .rxer                    (rxer0),
 
     .halt                    (halt[0])
+  );
+
+
+// -----------------------------------------------
+// Convert between GMII/RGMII
+// -----------------------------------------------
+
+  gmii_rgmii_conv conv0
+  (
+    .clk                       (clk),
+  
+    .gmiitxd                   (txd0),
+    .gmiitxen                  (txen0),
+    .gmiitxer                  (txer0),
+  
+    .rgmiitxd                  (rgmii_txd),
+    .rgmiitxctl                (rgmii_txctl),
+  
+    .rgmiirxd                  (rgmii_rxd),
+    .rgmiirxctl                (rgmii_rxctl),
+    
+    .gmiirxd                   (rxd0),
+    .gmiirxdv                  (rxdv0),
+    .gmiirxer                  (rxer0)
+  );
+
+
+// -----------------------------------------------
+// Convert between GMII/RGMII
+// -----------------------------------------------
+
+  gmii_rgmii_conv conv1
+  (
+    .clk                       (clk),
+  
+    .gmiitxd                   (txd1),
+    .gmiitxen                  (txen1),
+    .gmiitxer                  (txer1),
+  
+    .rgmiitxd                  (rgmii_rxd),
+    .rgmiitxctl                (rgmii_rxctl),
+  
+    .rgmiirxd                  (rgmii_txd),
+    .rgmiirxctl                (rgmii_txctl),
+    
+    .gmiirxd                   (rxd1),
+    .gmiirxdv                  (rxdv1),
+    .gmiirxer                  (rxer1)
   );
 
 // -----------------------------------------------
@@ -164,14 +187,14 @@ end
   udp_ip_pg #(.NODE(1)) node1
   (
     .clk                     (clk),
-    
-    .txd                     (rxd),
-    .txen                    (rxdv),
-    .txer                    (rxer),
 
-    .rxd                     (txd_dly),
-    .rxdv                    (txen_dly),
-    .rxer                    (txer_dly),
+    .txd                     (txd1),
+    .txen                    (txen1),
+    .txer                    (txen1),
+
+    .rxd                     (rxd1),
+    .rxdv                    (rxdv1),
+    .rxer                    (rxer1),
 
     .halt                    (halt[1])
   );

@@ -43,8 +43,9 @@ VPROC_PLI          = $(CURDIR)/VProc.so
 VLOGFLAGS          = -I$(VPROC_TOP) -Ptb.VCD_DUMP=1
 VLOGDEBUGFLAGS     = $(VLOGFLAGS) -Ptb.DEBUG_STOP=1
 
-VLOGFILES          = $(VPROC_TOP)/f_VProc.v     \
-                     ../verilog/udp_ip_pg.v     \
+VLOGFILES          = $(VPROC_TOP)/f_VProc.v       \
+                     ../verilog/gmii_rgmii_conv.v \
+                     ../verilog/udp_ip_pg.v       \
                      tb.v
 
 CFLAGS             = "-I$(CURDIR)/../src" $(USRFLAGS)

@@ -1,3 +1,4 @@
 sv      work ../../vproc/f_VProc.sv
+verilog work ../verilog/gmii_rgmii_conv.v
 verilog work ../verilog/udp_ip_pg.v
 verilog work tb.v

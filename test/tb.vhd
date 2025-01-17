@@ -53,12 +53,26 @@ constant CLK_PERIOD       : time    := 1 ms / CLK_FREQ_KHZ;
 signal         clk        : std_logic := '1';
 signal         count      : integer   := -1;
 
-signal         txd        : std_logic_vector( 7 downto 0);
-signal         txen       : std_logic;
-signal         txer       : std_logic;
-signal         rxd        : std_logic_vector( 7 downto 0);
-signal         rxdv       : std_logic;
-signal         rxer       : std_logic;
+signal         txd0       : std_logic_vector( 7 downto 0);
+signal         txen0      : std_logic;
+signal         txer0      : std_logic;
+signal         rxd0       : std_logic_vector( 7 downto 0);
+signal         rxdv0      : std_logic;
+signal         rxer0      : std_logic;
+
+signal         txd1       : std_logic_vector( 7 downto 0);
+signal         txen1      : std_logic;
+signal         txer1      : std_logic;
+signal         rxd1       : std_logic_vector( 7 downto 0);
+signal         rxdv1      : std_logic;
+signal         rxer1      : std_logic;
+
+
+signal        rgmii_rxd   : std_logic_vector(3 downto 0);
+signal        rgmii_rxctl : std_logic;
+signal        rgmii_txd   : std_logic_vector(3 downto 0);
+signal        rgmii_txctl : std_logic;
+
 signal         halt       : std_logic_vector( 1 downto 0);
 
 begin
@@ -107,15 +121,61 @@ begin
   port map (
      clk                     => clk,
 
-     txd                     => txd,
-     txen                    => txen,
-     txer                    => txer,
+     txd                     => txd0,
+     txen                    => txen0,
+     txer                    => txer0,
 
-     rxd                     => rxd,
-     rxdv                    => rxdv,
-     rxer                    => rxer,
+     rxd                     => rxd0,
+     rxdv                    => rxdv0,
+     rxer                    => rxer0,
 
      halt                    => halt(0)
+  );
+
+-- -----------------------------------------------
+-- Convert between GMII/RGMII
+-- -----------------------------------------------
+
+  conv0 : entity work.gmii_rgmii_conv
+  port map (
+     clk                     => clk,
+
+     gmiitxd                 => txd0,
+     gmiitxen                => txen0,
+     gmiitxer                => txer0,
+
+     rgmiitxd                => rgmii_txd,
+     rgmiitxctl              => rgmii_txctl,
+
+     rgmiirxd                => rgmii_rxd,
+     rgmiirxctl              => rgmii_rxctl,
+
+     gmiirxd                 => rxd0,
+     gmiirxdv                => rxdv0,
+     gmiirxer                => rxer0
+  );
+
+-- -----------------------------------------------
+-- Convert between GMII/RGMII
+-- -----------------------------------------------
+
+  conv1 : entity work.gmii_rgmii_conv
+  port map (
+     clk                     => clk,
+
+     gmiitxd                 => txd1,
+     gmiitxen                => txen1,
+     gmiitxer                => txer1,
+
+     rgmiitxd                => rgmii_rxd,
+     rgmiitxctl              => rgmii_rxctl,
+
+     rgmiirxd                => rgmii_txd,
+     rgmiirxctl              => rgmii_txctl,
+
+     gmiirxd                 => rxd1,
+     gmiirxdv                => rxdv1,
+     gmiirxer                => rxer1
   );
 
 -- -----------------------------------------------
@@ -128,15 +188,15 @@ begin
   )
   port map (
      clk                     => clk,
-     
-     txd                     => rxd,
-     txen                    => rxdv,
-     txer                    => rxer,
-                   
-     rxd                     => txd,
-     rxdv                    => txen,
-     rxer                    => txer,
-                            
+
+     txd                     => txd1,
+     txen                    => txen1,
+     txer                    => txer1,
+
+     rxd                     => rxd1,
+     rxdv                    => rxdv1,
+     rxer                    => rxer1,
+
      halt                    => halt(1)
   );
 
