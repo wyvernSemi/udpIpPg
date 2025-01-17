@@ -1,7 +1,7 @@
 # udpIpPg
 1GbE GMII UDP/IPv4 packet generator logic simulation component
 
-The `udpIpPg` project is a set of verification IP for generating and receiving 1GbE UDP/IPv4 Ethernet packets over an GMII interface in a Verilog or VHDL test environment. The generation environment is a set of C++ classes, to generate packets in to a buffer and then send that buffer over the HDL GMII interface. The connection between the HDL and the C++ domain is done using the Virtual Processor, [VProc](https://github.com/wyvernSemi/vproc)&mdash;a piece of VIP that allows C and C++ code, compiled for the local machine, to run and access the Verilog or VHDL simulation environment, and VProc is freely available on github.
+The `udpIpPg` project is a set of verification IP for generating and receiving 1GbE UDP/IPv4 Ethernet packets over an GMII interface in a Verilog or VHDL test environment. A GMII/RGMII convertor module is also provide to support IP with the RGMII interface. The generation environment is a set of C++ classes, to generate packets in to a buffer and then send that buffer over the HDL GMII interface. The connection between the HDL and the C++ domain is done using the Virtual Processor, [VProc](https://github.com/wyvernSemi/vproc)&mdash;a piece of VIP that allows C and C++ code, compiled for the local machine, to run and access the Verilog or VHDL simulation environment, and VProc is freely available on github.
 
 <p align="center">
 <img src="https://github.com/user-attachments/assets/6161e969-f274-4501-8e98-84d945cce58c" width=800>
@@ -18,6 +18,7 @@ The basic functionality provided is as listed below
 * A Verilog module or VHDL component, `udp_ip_pg`
     *	Clock input, nominally 125MHz (1×10<sup>9</sup> ÷ 8)
     *	GMII interface, with TX and RX data and control bits
+        * A GMII/RGMII convertor module is also supplied for RGMII IP support
     *	A halt output for use in test bench control
 *	A class to generate a UDP/IPv4 packet into a buffer
 *	A class to send a generated packet over the GMII interface
