@@ -92,6 +92,16 @@ begin
    forever #(500000000.0/CLK_FREQ_KHZ) clk = ~clk;
 end
 
+`ifdef VERILATOR
+reg clkx2;
+initial
+begin
+  clkx2                                = 1'b0;
+  // Generate a double frequency clock
+  forever #(250000000.0/CLK_FREQ_KHZ) clkx2 = ~clkx2;
+end
+`endif
+
 // -----------------------------------------------
 // Simulation control process
 // -----------------------------------------------
@@ -132,7 +142,6 @@ end
     .halt                    (halt[0])
   );
 
-
 // -----------------------------------------------
 // Convert between GMII/RGMII
 // -----------------------------------------------
@@ -140,17 +149,21 @@ end
   gmii_rgmii_conv conv0
   (
     .clk                       (clk),
-  
+
+`ifdef VERILATOR
+    .clkx2                     (clkx2),
+`endif
+
     .gmiitxd                   (txd0),
     .gmiitxen                  (txen0),
     .gmiitxer                  (txer0),
-  
+
     .rgmiitxd                  (rgmii_txd),
     .rgmiitxctl                (rgmii_txctl),
-  
+
     .rgmiirxd                  (rgmii_rxd),
     .rgmiirxctl                (rgmii_rxctl),
-    
+
     .gmiirxd                   (rxd0),
     .gmiirxdv                  (rxdv0),
     .gmiirxer                  (rxer0)
@@ -164,17 +177,21 @@ end
   gmii_rgmii_conv conv1
   (
     .clk                       (clk),
-  
+
+`ifdef VERILATOR
+    .clkx2                     (clkx2),
+`endif
+
     .gmiitxd                   (txd1),
     .gmiitxen                  (txen1),
     .gmiitxer                  (txer1),
-  
+
     .rgmiitxd                  (rgmii_rxd),
     .rgmiitxctl                (rgmii_rxctl),
-  
+
     .rgmiirxd                  (rgmii_txd),
     .rgmiirxctl                (rgmii_txctl),
-    
+
     .gmiirxd                   (rxd1),
     .gmiirxdv                  (rxdv1),
     .gmiirxer                  (rxer1)
