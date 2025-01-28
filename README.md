@@ -1,7 +1,7 @@
 # udpIpPg
 1GbE GMII UDP/IPv4 packet generator logic simulation component
 
-The `udpIpPg` project is a set of verification IP for generating and receiving 1GbE UDP/IPv4 Ethernet packets over an GMII interface in a Verilog or VHDL test environment. A GMII/RGMII convertor module is also provide to support IP with the RGMII interface. The generation environment is a set of C++ classes, to generate packets in to a buffer and then send that buffer over the HDL GMII interface. The connection between the HDL and the C++ domain is done using the Virtual Processor, [VProc](https://github.com/wyvernSemi/vproc)&mdash;a piece of VIP that allows C and C++ code, compiled for the local machine, to run and access the Verilog or VHDL simulation environment, and VProc is freely available on github.
+The `udpIpPg` project is a set of verification IP for generating and receiving 1GbE UDP/IPv4 Ethernet packets over an GMII interface in a Verilog or VHDL test environment. A GMII/RGMII convertor module is also provide to support IP with the RGMII interface. The generation environment is a set of C++ classes, to generate packets in to a buffer and then send that buffer over the HDL GMII interface. The connection between the HDL and the C++ domain is done using the Virtual Processor, [VProc](https://github.com/wyvernSemi/vproc)&mdash;a piece of VIP that allows C and C++ code, compiled for the local machine, to run and access the Verilog or VHDL simulation environment, and VProc is freely available on github. It also has a sibling project in the [tcpIpPg](https://github.com/wyvernSemi/tcpIpPg) VIP supporting TCP/IPv4 over 10GbE with an XGMII interface.
 
 <p align="center">
 <img src="https://github.com/user-attachments/assets/6161e969-f274-4501-8e98-84d945cce58c" width=800>
