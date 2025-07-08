@@ -31,6 +31,9 @@
 
 `timescale 1ps/1ps
 
+// define if RGMII
+`define RGMII
+
 module tb
 #(parameter GUI_RUN          = 0,
   parameter CLK_FREQ_KHZ     = 125000,
@@ -142,6 +145,7 @@ end
     .halt                    (halt[0])
   );
 
+`ifdef RGMII
 // -----------------------------------------------
 // Convert between GMII/RGMII
 // -----------------------------------------------
@@ -197,6 +201,16 @@ end
     .gmiirxer                  (rxer1)
   );
 
+`else
+assign rxd1  = txd0;
+assign rxdv1 = txen0;
+assign rxer1 = txer0;
+
+assign rxd0  = txd1;
+assign rxdv0 = txen1;
+assign rxer0 = txer1;
+`endif
+
 // -----------------------------------------------
 // UDP/IPv4 node 1
 // -----------------------------------------------
@@ -207,7 +221,7 @@ end
 
     .txd                     (txd1),
     .txen                    (txen1),
-    .txer                    (txen1),
+    .txer                    (txer1),
 
     .rxd                     (rxd1),
     .rxdv                    (rxdv1),

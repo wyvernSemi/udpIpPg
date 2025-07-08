@@ -123,7 +123,7 @@ public:
         {
             // Send out byte
             VWrite(TXD_ADDR, frame[idx] & 0xff,                                          true, node);
-            VWrite(TXC_ADDR, frame[idx] & TX_ERROR_MASK ? TX_CTRL_ERROR : TX_CTRL_VALID, true, node);
+            VWrite(TXC_ADDR, frame[idx] & TX_ERROR_MASK ? TX_CTRL_ERROR : (idx == 0 || idx == (len-1)) ? 0 : TX_CTRL_VALID, true, node);
 
             // Extract RX data and advance tick
             UdpVpExtractRx();
@@ -171,7 +171,7 @@ private:
 
         // If not receiving a frame already, and a new frame detected,
         // flag receiving and reset the RX buffer index
-        if (!receiving_frame && (rxc & RX_VALID_MASK) && rxd == SOF)
+        if (!receiving_frame && (rxc & RX_VALID_MASK) == 0 && rxd == SOF)
         {
             receiving_frame = true;
             error_detected  = false;
@@ -183,7 +183,7 @@ private:
         {
             // If an end-of-frame detected, clear the receiving frame state, and call the
             // method to process the data,
-            if (!rxc & RX_VALID_MASK)
+            if ((rxc & RX_VALID_MASK) == 0 && rxd == IDLE)
             {
                 receiving_frame = false;
 
