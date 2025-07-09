@@ -264,8 +264,10 @@ uint32_t udpIpPg::ethFrame(uint32_t* frame, uint32_t* payload, uint32_t payload_
         return 0;
     }
 
+#ifdef GENERATE_SOF_EOF
     // Add a start-of-frame token
     frame[fidx++]                      = SOF;
+#endif
 
     // Add 7 bytes of preamble
     for (int idx = 0; idx < ETH_PREAMBLE-2; idx++)
@@ -275,6 +277,8 @@ uint32_t udpIpPg::ethFrame(uint32_t* frame, uint32_t* payload, uint32_t payload_
 
     // Add start-of-frame delimiter
     frame[fidx++]                      = SFD;
+
+    uint32_t pkt_start                 = fidx;
 
     // Add 48 bits of destination address (MSB first)
     for (int idx = 0; idx < 6; idx++)
@@ -308,7 +312,7 @@ uint32_t udpIpPg::ethFrame(uint32_t* frame, uint32_t* payload, uint32_t payload_
     }
 
     // Calculate the CRC (excluding SOF, SFD and preamble)
-    uint32_t crc = crc32(&frame[ETH_PREAMBLE], fidx-ETH_PREAMBLE);
+    uint32_t crc = crc32(&frame[pkt_start], fidx-pkt_start);
 
     // Add crc
     for (int idx = 0; idx < 4; idx++)
@@ -316,8 +320,10 @@ uint32_t udpIpPg::ethFrame(uint32_t* frame, uint32_t* payload, uint32_t payload_
          frame[fidx++]                 = (crc >> (8*idx)) & 0xff;
     }
 
+#ifdef GENERATE_SOF_EOF
     // Add the EOF delimiter
     frame[fidx++]                      = EoF;
+#endif
 
     // Return the length of the ethernet data (in bytes), including preamble
     return fidx;

@@ -25,6 +25,7 @@
 # User overridable definitions
 #------------------------------------------------------
 
+USRFLAGS           =
 USRSIMFLAGS        =
 
 # Set to -GFINISH=1 for $finish at execution end, or blank for $stop
@@ -72,7 +73,7 @@ CPPSTD             = -std=c++20
 # Define the github repository URL for the VProc virtual processor
 VPROC_REPO         = https://github.com/wyvernSemi/vproc.git
 
-USRCFLAGS          = "-I$(CURDIR)/../src"
+USRCFLAGS          = "-I$(CURDIR)/../src $(USRFLAGS)"
 
 ARCHFLAG           = -m64
 
